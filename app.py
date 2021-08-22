@@ -27,7 +27,6 @@ fields = list(filter(None, fields))
 
 
 st.write(fields)
-print(fields)
 # need to build list of cities
 # iterate each cities with get requests
 
@@ -37,13 +36,13 @@ def dataFramer(sections):
     courses = []
     chevenings = []
     links = []
-    for section in sections:
-
+    fields = []
+    field = sections[1]
+    for section in sections[0]:
         uni = section.find('div', class_='search_dept-head')
         #Try to find unis that is are chevening
         try :
             chevening = uni.find('a', class_='tag tag-tick').text
-            uni.find('a', class_='tag tag-tick').text
             chevening = 'True'
             uni = uni.find_all('a')
             uni = uni[1].text
@@ -64,10 +63,11 @@ def dataFramer(sections):
             courses.append(course)
             unis.append(uni)
             chevenings.append(chevening)
+            fields.append(field)
         #courses.append(course.find('a', class_= 'course-name').text)
 
-    df = pd.DataFrame(list(zip(unis, courses,chevenings,links)),
-                columns =['University', 'Courses','Chevening','Links'])
+    df = pd.DataFrame(list(zip(unis, courses,chevenings,links,fields)),
+                columns =['University', 'Courses','Chevening Partner','Links','Field'])
     return df
 
 def filedownload(df):
@@ -76,55 +76,55 @@ def filedownload(df):
     href = f'<a href="data:file/csv;base64,{b64}" download="university-list.csv">Download CSV File</a>'
     return href
 
-soups = []
+if st.button('Confirm Selection'):
+    soups = []
 
-# need a way to check pagination container for list length, thats how we know how long it is
-for field in fields:
-    URL = 'https://www.postgrad.com/search/chevening/?q='+ field + '&uk_location='
-    page = requests.get(URL)
-    soup = BeautifulSoup(page.content, 'html.parser')
-    soups.append(soup)
-    print(field)
-
-#use the initial html soup scraped to figure out how many pages each query has
-pages_list = []
-
-for soup in soups:
-    page_container = soup.find('div', class_='pagination-container')
-    pages = page_container.find_all('li')
-    #number of of <li> indicates number of pages. -1 because 1 <li> represents the active page
-    if len(pages) != 1:
-        pages_list.append(len(pages)-1)
-    else:
-        pages_list.append(1)
-
-field_page_dict = dict(zip(fields, pages_list))
-new_soups = []
-for field,pages in field_page_dict.items():
-    for page in range(1,pages+1):
-        URL = 'https://www.postgrad.com/search/chevening/?q='+ field + '&uk_location=&page=' + str(page)
-        print(URL)
+    # need a way to check pagination container for list length, thats how we know how long it is
+    for field in fields:
+        URL = 'https://www.postgrad.com/search/chevening/?q='+ field + '&uk_location='
         page = requests.get(URL)
-        new_soup = BeautifulSoup(page.content, 'html.parser')
-        new_soups.append(new_soup)
+        soup = BeautifulSoup(page.content, 'html.parser')
+        soup = (soup, field)
+        soups.append(soup)
+
+    #use the initial html soup scraped to figure out how many pages each query has
+    pages_list = []
+
+    for soup,field in soups:
+        page_container = soup.find('div', class_='pagination-container')
+        pages = page_container.find_all('li')
+        #number of of <li> indicates number of pages. -1 because 1 <li> represents the active page
+        if len(pages) != 1:
+            pages_list.append(len(pages)-1)
+        else:
+            pages_list.append(1)
+
+    field_page_dict = dict(zip(fields, pages_list))
+    new_soups = []
+    for field,pages in field_page_dict.items():
+        for page in range(1,pages+1):
+            URL = 'https://www.postgrad.com/search/chevening/?q='+ field + '&uk_location=&page=' + str(page)
+            page = requests.get(URL)
+            new_soup = BeautifulSoup(page.content, 'html.parser')
+            temp_tuple = (new_soup , field)
+            new_soups.append(temp_tuple)
 
 
-sections_list =[]
+    sections_list =[]
+    for new_soup , field in new_soups:
+        sections = new_soup.find_all('section', class_='search_dept')
+        temp_tup = (sections,field)
+        sections_list.append(temp_tup)
 
-for new_soup in new_soups:
-    sections = new_soup.find_all('section', class_='search_dept')
-    sections_list.append(sections)
 
+    #Using dataFramer function on all sections that and all data to be appended to dataframe
+    dataframe_list = []
+    for sections in sections_list:
+        section_data = dataFramer(sections)
+        dataframe_list.append(section_data)
 
-#Using dataFramer function on all sections that and all data to be appended to dataframe
-dataframe_list = []
-for sections in sections_list:
-    section_data = dataFramer(sections)
-    dataframe_list.append(section_data)
+    all_data =pd.concat(dataframe_list)
 
-all_data =pd.concat(dataframe_list)
+    st.dataframe(all_data)
 
-st.dataframe(all_data)
-
-st.markdown(filedownload(all_data), unsafe_allow_html=True)
-#all_data.to_csv('chevening_university.csv',index=False)
+    st.markdown(filedownload(all_data), unsafe_allow_html=True)
