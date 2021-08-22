@@ -66,8 +66,8 @@ def dataFramer(sections):
             fields.append(field)
         #courses.append(course.find('a', class_= 'course-name').text)
 
-    df = pd.DataFrame(list(zip(unis, courses,chevenings,links,fields)),
-                columns =['University', 'Courses','Chevening Partner','Links','Field'])
+    df = pd.DataFrame(list(zip(unis, courses,fields,chevenings,links)),
+                columns =['University', 'Courses','Field','Chevening Partner','Links'])
     return df
 
 def filedownload(df):
