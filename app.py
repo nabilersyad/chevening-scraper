@@ -3,7 +3,6 @@ import pandas as pd
 import base64
 import numpy as np
 import requests
-import pprint
 from bs4 import BeautifulSoup
 import pandas as pd 
 
