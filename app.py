@@ -36,12 +36,14 @@ def dataFramer(sections):
     unis = []
     courses = []
     chevenings = []
+    links = []
     for section in sections:
 
         uni = section.find('div', class_='search_dept-head')
         #Try to find unis that is are chevening
         try :
             chevening = uni.find('a', class_='tag tag-tick').text
+            uni.find('a', class_='tag tag-tick').text
             chevening = 'True'
             uni = uni.find_all('a')
             uni = uni[1].text
@@ -54,14 +56,18 @@ def dataFramer(sections):
 
         course_list = section.find_all('li')
         for course in course_list:
+            link = course.find('a', class_= 'course-name')
+            link = link.get('href') 
+            link = 'https://www.postgrad.com' + link
+            links.append(link)
             course  = course.find('a', class_= 'course-name').text
             courses.append(course)
             unis.append(uni)
             chevenings.append(chevening)
         #courses.append(course.find('a', class_= 'course-name').text)
 
-    df = pd.DataFrame(list(zip(unis, courses,chevenings)),
-                columns =['University', 'Courses','Chevening'])
+    df = pd.DataFrame(list(zip(unis, courses,chevenings,links)),
+                columns =['University', 'Courses','Chevening','Links'])
     return df
 
 def filedownload(df):
