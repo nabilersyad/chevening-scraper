@@ -6,9 +6,14 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd 
 
-st.title('Chevening Data Scraper')
+st.title('Chevening Data Scraper 2021')
 
 st.markdown("""
+[![Star](https://img.shields.io/github/stars/nabilersyad/chevening-scraper?style=social)](https://github.com/nabilersyad/chevening-scraper)
+&nbsp[![Follow](https://img.shields.io/twitter/follow/NabilErsyad?style=social)](https://twitter.com/NabilErsyad)
+&nbsp[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee--yellow.svg?logo=buy-me-a-coffee&logoColor=orange&style=social)](https://www.buymeacoffee.com/nabilersyad)
+
+
 Scrapes Chevening Site for courses
 
 Key in the fields you'd like to search and scrape. The more you enter the longer it'll take!
@@ -16,7 +21,7 @@ Key in the fields you'd like to search and scrape. The more you enter the longer
 
 #Naively created input fields for people to scrape
 field1 = st.text_input('Field 1',value ='Cloud')
-field2 = st.text_input('Field 2')
+field2 = st.text_input('Field 2', value='Data')
 field3 = st.text_input('Field 3')
 field4 = st.text_input('Field 4')
 field5 = st.text_input('Field 5')
