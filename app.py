@@ -5,6 +5,8 @@ import numpy as np
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd 
+import plotly.graph_objects as go
+
 
 st.title('Chevening Data Scraper 2021')
 
@@ -14,9 +16,10 @@ st.markdown("""
 &nbsp[![Buy me a coffee](https://img.shields.io/badge/Buy%20me%20a%20coffee--yellow.svg?logo=buy-me-a-coffee&logoColor=orange&style=social)](https://www.buymeacoffee.com/nabilersyad)
 
 
-Scrapes Chevening Site for courses
+Scrapes Chevening Site for courses and universities on the Chevening website @ https://www.chevening.org/scholarships/find-a-course/ to get a list of courses and universities that may interest you
 
-Key in the fields you'd like to search and scrape. The more you enter the longer it'll take!
+Just enter the fields or courses that you're want to look for and click the button below. The more you enter the longer it'll take!
+
 """)
 
 #Naively created input fields for people to scrape
@@ -31,7 +34,7 @@ fields = [field1,field2,field3,field4,field5]
 fields = list(filter(None, fields))
 
 
-st.write(fields)
+st.write("You've entered the following field(s): "+ str(fields))
 # need to build list of cities
 # iterate each cities with get requests
 
@@ -130,6 +133,30 @@ if st.button('Confirm Selection'):
 
     all_data =pd.concat(dataframe_list)
 
+    m1, m2, m3, m4= st.columns((1,1,1,1))
+    
+    courses_total =   len(all_data)
+    universities_total = len(all_data['University'].unique())   
+    
+    m1.write('')
+    m2.metric(label ='Total Available Courses',value = courses_total)
+    m3.metric(label ='Total Universities',value = universities_total)
+    m4.write('')
+
+
+    # fig = go.Figure(data=[go.Table(
+    #     header=dict(values=list(all_data.columns),
+    #                 fill_color='paleturquoise',
+    #                 align='left'),
+    #     cells=dict(values=[all_data['University'], all_data['Courses'], all_data['Field'], all_data['Chevening Partner'],all_data['Links']],
+    #             fill_color='lavender',
+    #             align='left'))
+    # ])
+
+    # st.plotly_chart(fig)
     st.dataframe(all_data)
 
+    st.write('Click the button below to download this list')
     st.markdown(filedownload(all_data), unsafe_allow_html=True)
+
+
