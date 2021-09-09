@@ -8,7 +8,7 @@ import pandas as pd
 import plotly.graph_objects as go
 
 
-st.title('Chevening Data Scraper 2021')
+st.title('Chevening Find A Course List Compiler 2021')
 
 st.markdown("""
 [![Star](https://img.shields.io/github/stars/nabilersyad/chevening-scraper?style=social)](https://github.com/nabilersyad/chevening-scraper)
@@ -23,8 +23,8 @@ Just enter the fields or courses that you're want to look for and click the butt
 """)
 
 #Naively created input fields for people to scrape
-field1 = st.text_input('Field 1',value ='Cloud')
-field2 = st.text_input('Field 2', value='Data')
+field1 = st.text_input('Field 1',value ='Data Science')
+field2 = st.text_input('Field 2', value='Biology')
 field3 = st.text_input('Field 3')
 field4 = st.text_input('Field 4')
 field5 = st.text_input('Field 5')
